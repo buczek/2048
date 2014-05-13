@@ -2,22 +2,13 @@ package de.mpg.molgen.buczek.g2048;
 import java.util.Random;
 
 public class Feld {
-
+	static final String D_NAMES[] = {"UP","LEFT","RIGHT","DOWN"};
 	static private Random random=new Random();
 
-	int gitter[][]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+	private int gitter[][]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+	private int xfree=16;
 	
-
-	int free() {
-		int count=0;
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++) 
-				if (gitter[i][j]==0)
-					count++;
-		return count;
-	}
-	
-	
+	int free() { return xfree; }
 	
 	public Feld() {
 	}
@@ -26,6 +17,7 @@ public class Feld {
 		for (int i=0;i<4;i++)
 			for (int j=0;j<4;j++)
 				gitter[i][j]=f.gitter[i][j];
+		xfree=f.xfree;
 	}
 	
 	public Boolean isEqual(Feld f) {
@@ -49,20 +41,16 @@ public class Feld {
 	
 	
 	public Boolean zufall() {
-		int count=0;
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++) 
-				if (gitter[i][j]==0)
-					count++;
-		int value=random.nextInt(4)>1 ? 2 : 4;
-		if (count==0)
+		if (xfree==0)
 			return false;
-		count=random.nextInt(count);
+		int value=random.nextInt(4)>1 ? 2 : 4;
+		int count=random.nextInt(xfree);
 		for (int i=0;i<4;i++)
 			for (int j=0;j<4;j++) 
 				if (gitter[i][j]==0)
 					if (count--==0) {
 						gitter[i][j]=value;
+						xfree--;
 						return true;
 					}
 		// not reached
@@ -72,7 +60,7 @@ public class Feld {
 	}
 
 	
-	public  int[] shift(int in[]) {
+	public  int[] _shift(int in[]) {
 		int out[]={0,0,0,0};
 		
 		int read=0;
@@ -80,10 +68,25 @@ public class Feld {
 			while (read<4 && in[read]==0) read++;
 			out[write]=read<4 ? in[read++] : 0;
 			while (read<4 && in[read]==0) read++;
-			if (read<4 && in[read]==out[write])
+			if (read<4 && in[read]==out[write]) {
 				out[write]+=in[read++];
+				xfree++;
+			}
 		}		
 		return out;
+	}
+	
+	public  void shift(int array[]) {
+		int read=0;
+		for (int write=0;write<4;write++) {
+			while (read<4 && array[read]==0) read++;
+			array[write]=read<4 ? array[read++] : 0;
+			while (read<4 && array[read]==0) read++;
+			if (read<4 && array[read]==array[write]) {
+				array[write]+=array[read++];
+				xfree++;
+			}
+		}		
 	}
 	
 
@@ -96,7 +99,7 @@ public class Feld {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
 				d[j]=gitter[i][j];
-			d=shift(d);
+			shift(d);
 			for (int j=0;j<4;j++)
 				gitter[i][j]=d[j];
 		}	
@@ -109,7 +112,7 @@ public class Feld {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
 				d[3-j]=gitter[i][j];
-			d=shift(d);
+			shift(d);
 			for (int j=0;j<4;j++)
 				gitter[i][j]=d[3-j];
 		}	
@@ -123,7 +126,7 @@ public class Feld {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
 				d[j]=gitter[j][i];
-			d=shift(d);
+			shift(d);
 			for (int j=0;j<4;j++)
 				gitter[j][i]=d[j];
 		}	
@@ -136,7 +139,7 @@ public class Feld {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
 				d[3-j]=gitter[j][i];
-			d=shift(d);
+			shift(d);
 			for (int j=0;j<4;j++)
 				gitter[j][i]=d[3-j];
 		}	
@@ -153,6 +156,8 @@ public class Feld {
 	
 	public void set(int i,int j,int value) {
 		try {
+			if (gitter[i][j]==0) xfree--;
+			if (value==0) xfree++;
 			gitter[i][j]=value;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			;

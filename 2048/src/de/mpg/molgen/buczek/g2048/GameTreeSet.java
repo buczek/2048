@@ -8,9 +8,7 @@ public class GameTreeSet extends GameTree {
 		
 		children=new GameTree[variants];
 		for (int i=0;i<variants;i++) {
-			GameTreeDir child=new GameTreeDir();
-			child.parent=this;
-			child.feld=new Feld(feld);
+			GameTreeDir child=new GameTreeDir(feld);
 			children[i]=child;			
 		}
 		
@@ -31,9 +29,9 @@ public class GameTreeSet extends GameTree {
 
 	}
 
-	public int computeValueFromChildren() {
+	public double computeValueFromChildren() {
 
-		int sum=0;
+		double sum=0;
 		int i;
 		for (i=0;i<children.length/2;i++) {
 			sum+=children[i].value*3;
@@ -43,7 +41,7 @@ public class GameTreeSet extends GameTree {
 			sum+=children[i].value;
 		}
 
-		return sum;
+		return sum/children.length/4;
 	}
 	
 

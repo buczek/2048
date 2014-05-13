@@ -13,6 +13,12 @@ public class GameTreeDir extends GameTree {
 	}
 
 	int getBestDirection() {
+
+		for (int d=0;d<4;d++) {
+			if (children[d]!=null) {
+				System.out.printf(" %-5s : %7.5f\n",Feld.D_NAMES[d],children[d].value);
+			}
+		}		
 		return best_child;
 	}
 
@@ -23,17 +29,17 @@ public class GameTreeDir extends GameTree {
 			Feld f=new Feld(feld);
 			if (f.move(i)) {
 				GameTreeSet child=new GameTreeSet();
-				child.parent=this;
 				child.feld=f;
+				child.value=f.free();
 				children[i]=child;							
 			}
 		}
 	}
 
 
-	public int computeValueFromChildren() {
+	public double computeValueFromChildren() {
 
-		int max_value=Integer.MIN_VALUE;
+		double max_value=0;
 		for (int i=0;i<children.length;i++) {
 			if (children[i]!=null) {
 				if (children[i].value>max_value) {
@@ -42,9 +48,8 @@ public class GameTreeDir extends GameTree {
 				}
 			}
 		}
-		return max_value+feld.free()*1024;
-	}		
-
+		return feld.free()+max_value/16;
+	}
 
 
 
@@ -57,7 +62,7 @@ public class GameTreeDir extends GameTree {
 		for (int d=0;d<4;d++) {
 			free[d]=children[d]!=null ? children[d].feld.free() : 0;
 		}
-
+		
 		int max_free_count=0;
 		for (int d=0;d<4;d++) {
 			if (free[d]>value) {
@@ -71,9 +76,8 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0)
+		if (max_free_count<2 || maxDepth<=0 || value>=6)
 			return;
-
 
 		for (int i=0;i<children.length;i++) {
 			if (children[i]!=null) {
