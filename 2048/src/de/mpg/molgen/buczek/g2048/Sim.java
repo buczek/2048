@@ -55,7 +55,7 @@ public class Sim {
 	static private String D_NAMES[] = {"UP","LEFT","RIGHT","DOWN"};
 		
 	Boolean move(int direction) {
-		if (move(f,direction)) {
+		if (f.move(direction)) {
 			System.out.println(D_NAMES[direction]);
 			f.dump();
 			zufall();
@@ -64,35 +64,7 @@ public class Sim {
 		return false;
 	}
 
-	static Boolean move(Feld f,int direction) {
-		switch(direction) {
-		case 0 : return f.up();
-		case 1 : return f.left();
-		case 2 : return f.right();
-		case 3 : return f.down();
-		}	
-		return false;		
-	}
 	 
-	static int bewertung(Feld f) {
-
-
-		int v=f.free();
-		
-		
-		for (int i=0;i<3;i++) {			
-			for (int j=0;j<3;j++) {
-				int d=f.get(i,j);
-				if (f.get(i-1,j)*2==d) v++;
-				if (f.get(i+1,j)==d) v++;
-				if (f.get(i,j-1)*2==d) v++;
-				if (f.get(1,j+1)==d) v++;				
-			}
-		}
-		return v;
-		//return f.free()*1024+v;
-	 }
-
 	
 	
 	void main() {
@@ -104,28 +76,20 @@ public class Sim {
 
 		while (true) {
 
-			int  value[] = new int[4];			
-			for (int d=0;d<4;d++) {
-				Feld ff=new Feld(f);
-				if (move(ff,d)) {
-					value[d]=bewertung(ff);
-				} else {
-					value[d]=Integer.MIN_VALUE;
-				}
-				 System.out.println(" V : dir "+D_NAMES[d]+" V "+value[d]);
-			}
-			int best_dir=-1;
-			int best_value=Integer.MIN_VALUE;
-			for (int d=0;d<4;d++) {
-				if (value[d]>best_value) {
-					best_dir=d;
-					best_value=value[d];
-				}
-			}
+			GameTreeDir gameTree = new GameTreeDir(f);
 
-			// System.out.println("best dir "+best_dir+" value "+best_value);
+			//int depth=f.free()>8 ? 4 : 6;
+			//int depth=f.free()>8 ? 4 : f.free()>4 ? 6 : 8;
+
 			
-			if (!move(best_dir)) {
+			int depth=f.free()>6 ? 2 : 4;
+			// int depth=3;
+			
+			gameTree.run(depth);
+			
+			int direction=gameTree.getBestDirection();
+			
+			if (!move(direction)) {
 				System.out.println("no moves left");
 				break;
 			}

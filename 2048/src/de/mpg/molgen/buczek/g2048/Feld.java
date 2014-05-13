@@ -150,8 +150,25 @@ public class Feld {
 			return 0;
 		}
 	}
-
 	
+	public void set(int i,int j,int value) {
+		try {
+			gitter[i][j]=value;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			;
+		}
+	}
+
+	public Boolean move(int direction) {
+		switch(direction) {
+		case 0 : return up();
+		case 1 : return left();
+		case 2 : return right();
+		case 3 : return down();
+		}
+		return false;
+	}
+
 	
 }
 	
