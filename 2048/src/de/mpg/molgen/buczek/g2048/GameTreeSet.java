@@ -41,7 +41,7 @@ public class GameTreeSet extends GameTree {
 			sum+=children[i].value;
 		}
 
-		return sum/children.length/4;
+		return sum/children.length/2;
 	}
 	
 

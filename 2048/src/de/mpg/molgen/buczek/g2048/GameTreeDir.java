@@ -16,9 +16,10 @@ public class GameTreeDir extends GameTree {
 
 		for (int d=0;d<4;d++) {
 			if (children[d]!=null) {
-				System.out.printf(" %-5s : %7.5f\n",Feld.D_NAMES[d],children[d].value);
+				System.out.printf(" %-5s : %16.14f\n",Feld.D_NAMES[d],children[d].value);
 			}
 		}		
+		System.out.println();
 		return best_child;
 	}
 
@@ -48,7 +49,7 @@ public class GameTreeDir extends GameTree {
 				}
 			}
 		}
-		return feld.free()+max_value/16;
+		return max_value;
 	}
 
 
@@ -76,7 +77,7 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=6)
+		if (max_free_count<2 || maxDepth<=0 || value>=8)
 			return;
 
 		for (int i=0;i<children.length;i++) {
