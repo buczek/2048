@@ -1,6 +1,5 @@
 package de.mpg.molgen.buczek.g2048;
 
-import de.mpg.molgen.buczek.g2048.GameTree.BewertungsHandler;
 
 public class GameTreeSet extends GameTree {
 	

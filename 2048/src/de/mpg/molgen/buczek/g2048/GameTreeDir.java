@@ -1,8 +1,5 @@
 package de.mpg.molgen.buczek.g2048;
 
-import java.util.ArrayList;
-
-import de.mpg.molgen.buczek.g2048.GameTree.BewertungsHandler;
 
 
 public class GameTreeDir extends GameTree {

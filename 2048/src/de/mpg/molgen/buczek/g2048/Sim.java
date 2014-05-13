@@ -82,7 +82,8 @@ public class Sim {
 			//int depth=f.free()>8 ? 4 : f.free()>4 ? 6 : 8;
 
 			
-			int depth=f.free()>6 ? 2 : 4;
+			int depth=f.free()>6 ? 1 : 3;
+			// int depth=f.free()>6 ? 2 : 4;
 			// int depth=3;
 			
 			gameTree.run(depth);
