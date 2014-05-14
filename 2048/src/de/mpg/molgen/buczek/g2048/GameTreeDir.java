@@ -14,11 +14,9 @@ public class GameTreeDir extends GameTree {
 
 	int getBestDirection() {
 
-		for (int d=0;d<4;d++) {
-			if (children[d]!=null) {
-				System.out.printf(" %-5s : %16.14f\n",Feld.D_NAMES[d],children[d].value);
-			}
-		}		
+		for (int d=0;d<4;d++)
+			if (children[d]!=null)
+					System.out.printf(" %-5s : %16.14f\n",Feld.D_NAMES[d],children[d].value);
 		System.out.println();
 		return best_child;
 	}
@@ -53,7 +51,12 @@ public class GameTreeDir extends GameTree {
 	}
 
 
-
+	public void run_purge(int maxDepth) {
+		run(maxDepth);
+		children=null;
+	}
+	
+	
 	public void run (int maxDepth) {
 
 		init_children();
@@ -77,8 +80,9 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=8)
+		if (max_free_count<2 || maxDepth<=0 || value>=8) {
 			return;
+		}
 
 		for (int i=0;i<children.length;i++) {
 			if (children[i]!=null) {
@@ -88,4 +92,7 @@ public class GameTreeDir extends GameTree {
 
 		value=computeValueFromChildren();			
 	}
+
+
+
 }

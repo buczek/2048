@@ -4,7 +4,11 @@ import java.util.Random;
 public class Feld {
 	static final String D_NAMES[] = {"UP","LEFT","RIGHT","DOWN"};
 	static private Random random=new Random();
-
+	static public void initRandom(long seed) {
+		random=new Random(seed);
+	}
+	
+	
 	private int gitter[][]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
 	private int xfree=16;
 	
@@ -60,21 +64,6 @@ public class Feld {
 	}
 
 	
-	public  int[] _shift(int in[]) {
-		int out[]={0,0,0,0};
-		
-		int read=0;
-		for (int write=0;write<4;write++) {
-			while (read<4 && in[read]==0) read++;
-			out[write]=read<4 ? in[read++] : 0;
-			while (read<4 && in[read]==0) read++;
-			if (read<4 && in[read]==out[write]) {
-				out[write]+=in[read++];
-				xfree++;
-			}
-		}		
-		return out;
-	}
 	
 	public  void shift(int array[]) {
 		int read=0;

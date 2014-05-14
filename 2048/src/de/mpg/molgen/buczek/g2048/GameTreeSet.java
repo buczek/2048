@@ -45,7 +45,6 @@ public class GameTreeSet extends GameTree {
 	}
 	
 
-	
 	public void run (int maxDepth) {
 
 		if (feld.free()==0) {
@@ -57,7 +56,7 @@ public class GameTreeSet extends GameTree {
 
 		for (int c=0;c<children.length;c++) {
 			GameTreeDir child=(GameTreeDir)children[c];
-			child.run(maxDepth);		
+			child.run_purge(maxDepth);		
 		}
 
 		value=computeValueFromChildren();			

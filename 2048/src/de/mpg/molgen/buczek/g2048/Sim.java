@@ -68,12 +68,17 @@ public class Sim {
 	
 	
 	void main() {
+		
+		Feld.initRandom(123);
+		
+		
 		System.out.println("init...");
 		f.zufall();	
 		f.zufall();
 		f.dump();
 		System.out.println("run....");
 
+		
 		while (true) {
 
 			GameTreeDir gameTree = new GameTreeDir(f);
