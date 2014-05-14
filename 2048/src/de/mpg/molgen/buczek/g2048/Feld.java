@@ -19,10 +19,11 @@ public class Feld {
 	
 	public Feld(Feld f) {
 		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++)
-				gitter[i][j]=f.gitter[i][j];
+			for (int j=0;j<4;j++) gitter[i][j]=f.gitter[i][j];
+			// not faster: System.arraycopy(f.gitter[i],0,gitter[i],0,4);
 		xfree=f.xfree;
 	}
+
 	
 	public Boolean isEqual(Feld f) {
 		for (int i=0;i<4;i++)
