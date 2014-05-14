@@ -9,7 +9,12 @@ public class Feld {
 	}
 	
 	
-	private int gitter[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	// 0 = 0 (!)
+	// 1 = 2
+	// 2 = 4
+	// 3 = 8
+	
+	private byte gitter[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	private int xfree=16;
 	
 	int free() { return xfree; }
@@ -34,7 +39,7 @@ public class Feld {
 	public void dump() {
 		for (int i=0;i<4;i++) {
 			for (int j=0;j<4;j++) {
-				System.out.printf("%4d ",gitter[i*4+j]);
+				System.out.printf("%4d ",gitter[i*4+j]==0 ? 0 : (1<<gitter[i*4+j]));
 			}
 			System.out.println();
 		}
@@ -45,7 +50,7 @@ public class Feld {
 	public Boolean zufall() {
 		if (xfree==0)
 			return false;
-		int value=random.nextInt(4)>1 ? 2 : 4;
+		byte value=random.nextInt(4)>1 ? (byte)1 : (byte)2;
 		int count=random.nextInt(xfree);
 		for (int i=0;i<16;i++)
 				if (gitter[i]==0)
@@ -62,14 +67,15 @@ public class Feld {
 
 	
 	
-	public  void shift(int array[]) {
+	public  void shift(byte array[]) {
 		int read=0;
 		for (int write=0;write<4;write++) {
 			while (read<4 && array[read]==0) read++;
 			array[write]=read<4 ? array[read++] : 0;
 			while (read<4 && array[read]==0) read++;
 			if (read<4 && array[read]==array[write]) {
-				array[write]+=array[read++];
+				array[write]++;
+				read++;
 				xfree++;
 			}
 		}		
@@ -82,7 +88,7 @@ public class Feld {
 	public Boolean left() {
 		Feld save=new Feld(this);
 		for (int i=0;i<4;i++) {
-			int d[]=new int[4];
+			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
 				d[j]=gitter[i*4+j];
 			shift(d);
@@ -95,7 +101,7 @@ public class Feld {
 	public Boolean right() {
 		Feld save=new Feld(this);
 		for (int i=0;i<4;i++) {
-			int d[]=new int[4];
+			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
 				d[3-j]=gitter[i*4+j];
 			shift(d);
@@ -109,7 +115,7 @@ public class Feld {
 	public Boolean up() {
 		Feld save=new Feld(this);
 		for (int i=0;i<4;i++) {
-			int d[]=new int[4];
+			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
 				d[j]=gitter[j*4+i];
 			shift(d);
@@ -122,7 +128,7 @@ public class Feld {
 	public Boolean down() {
 		Feld save=new Feld(this);
 		for (int i=0;i<4;i++) {
-			int d[]=new int[4];
+			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
 				d[3-j]=gitter[j*4+i];
 			shift(d);
@@ -143,7 +149,7 @@ public class Feld {
 		if (i>=0&&i<4&&j>=0&&j<4) {
 			if (gitter[i*4+j]==0) xfree--;
 			if (value==0) xfree++;
-			gitter[i*4+j]=value;
+			gitter[i*4+j]=(byte)value;
 		}
 	}
 

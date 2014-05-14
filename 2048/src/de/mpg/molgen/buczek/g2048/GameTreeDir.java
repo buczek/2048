@@ -80,7 +80,7 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=10) {
+		if (max_free_count<2 || maxDepth<=0 || value>=9) {
 			return;
 		}
 
