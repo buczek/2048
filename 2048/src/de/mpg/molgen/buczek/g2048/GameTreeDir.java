@@ -25,11 +25,11 @@ public class GameTreeDir extends GameTree {
 	public void init_children() {
 		children=new GameTree[4];
 		for (int i=0;i<4;i++) {
-			Board f=new Board(board);
-			if (f.move(i)) {
+			Board childBoard=new Board(board);
+			if (childBoard.move(i)) {
 				GameTreeSet child=new GameTreeSet();
-				child.board=f;
-				child.value=f.getFreeCellCount();
+				child.board=childBoard;
+				child.value=childBoard.getFreeCellCount();
 				children[i]=child;							
 			}
 		}

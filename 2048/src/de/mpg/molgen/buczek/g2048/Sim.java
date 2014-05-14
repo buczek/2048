@@ -2,7 +2,7 @@ package de.mpg.molgen.buczek.g2048;
 
 public class Sim {
 
-	public final int MAX_DEPTH=3;
+	public final int MAX_DEPTH=4;
 	
 	Board board=new Board();
 
