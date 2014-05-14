@@ -1,9 +1,9 @@
 package de.mpg.molgen.buczek.g2048;
 
-
 public class Sim {
 
-	Feld f=new Feld();
+	
+	Board f=new Board();
 
 	void zufall() {
 		System.out.println("set");
@@ -69,7 +69,7 @@ public class Sim {
 	
 	void main() {
 		
-		Feld.initRandom(1234);
+		Board.initRandom(1234);
 		
 		
 		System.out.println("init...");

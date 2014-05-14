@@ -8,15 +8,15 @@ public class GameTreeDir extends GameTree {
 
 	public GameTreeDir() {}
 
-	public GameTreeDir(Feld feld) {
-		this.feld=new Feld (feld);
+	public GameTreeDir(Board board) {
+		this.board=new Board (board);
 	}
 
 	int getBestDirection() {
 
 		for (int d=0;d<4;d++)
 			if (children[d]!=null)
-					System.out.printf(" %-5s : %16.14f\n",Feld.D_NAMES[d],children[d].value);
+					System.out.printf(" %-5s : %16.14f\n",Board.D_NAMES[d],children[d].value);
 		System.out.println();
 		return best_child;
 	}
@@ -25,11 +25,11 @@ public class GameTreeDir extends GameTree {
 	public void init_children() {
 		children=new GameTree[4];
 		for (int i=0;i<4;i++) {
-			Feld f=new Feld(feld);
+			Board f=new Board(board);
 			if (f.move(i)) {
 				GameTreeSet child=new GameTreeSet();
-				child.feld=f;
-				child.value=f.free();
+				child.board=f;
+				child.value=f.getFreeCellCount();
 				children[i]=child;							
 			}
 		}
@@ -64,7 +64,7 @@ public class GameTreeDir extends GameTree {
 		int	free[]=new int[4];
 
 		for (int d=0;d<4;d++) {
-			free[d]=children[d]!=null ? children[d].feld.free() : 0;
+			free[d]=children[d]!=null ? children[d].board.getFreeCellCount() : 0;
 		}
 		
 		int max_free_count=0;

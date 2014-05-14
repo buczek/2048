@@ -1,22 +1,21 @@
-#include "de_mpg_molgen_buczek_g2048_Feld.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 JNIEXPORT void JNICALL Java_de_mpg_molgen_buczek_g2048_Feld_shift
   (JNIEnv *env, jobject obj, jbyteArray arrayArg) {
 
-	jclass   feldClass=(*env)->FindClass(env,"de/mpg/molgen/buczek/g2048/Feld");
-	if (!feldClass) {
-		fprintf(stderr,"can't find class de/mpg/molgen/buczek/g2048/Feld\n");
+	jclass   boardClass=(*env)->FindClass(env,"de/mpg/molgen/buczek/g2048/Board");
+	if (!boardClass) {
+		fprintf(stderr,"can't find class de/mpg/molgen/buczek/g2048/Board\n");
 		exit(1);
 	}
-	jfieldID xfreeFieldID=(*env)->GetFieldID(env,feldClass,"xfree","I");
-	if (!xfreeFieldID) {
-		fprintf(stderr,"can't find field xfree\n");
+	jfieldID freeCellCountID=(*env)->GetFieldID(env,boardClass,"freeCellCount","I");
+	if (!freeCellCountID) {
+		fprintf(stderr,"can't find field freeCellCount\n");
 		exit(1);
 	}
 
-	int xfree=(*env)->GetIntField(env,obj,xfreeFieldID);
+	int xfree=(*env)->GetIntField(env,obj,freeCellCountID);
 	int xfree_orig=xfree;
 	//printf("xfree: %d\n",xfree);
 
@@ -38,7 +37,7 @@ JNIEXPORT void JNICALL Java_de_mpg_molgen_buczek_g2048_Feld_shift
 
 	//printf("xfree out: %d\n",xfree);
 	if (xfree!=xfree_orig)
-		(*env)->SetIntField(env,obj,xfreeFieldID,xfree); 
+		(*env)->SetIntField(env,obj,freeCellCountID,xfree); 
 	(*env)->ReleaseByteArrayElements(env,arrayArg,array,0);
 	fflush(stdout);
 }

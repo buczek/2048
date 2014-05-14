@@ -1,7 +1,7 @@
 package de.mpg.molgen.buczek.g2048;
 import java.util.Random;
 
-public class Feld {
+public class Board {
 	static final String D_NAMES[] = {"UP","LEFT","RIGHT","DOWN"};
 	static private Random random=new Random();
 	static public void initRandom(long seed) {
@@ -12,25 +12,23 @@ public class Feld {
 	// 0 = 0 (!)
 	// 1 = 2
 	// 2 = 4
-	// 3 = 8
+	// 3 = 8	
+	private byte cells[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	private int  freeCellCount=16;
 	
-	private byte gitter[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	private int xfree=16;
+	int getFreeCellCount() { return freeCellCount; }
 	
-	int free() { return xfree; }
-	
-	public Feld() {
-	}
-	
-	public Feld(Feld f) {
-		System.arraycopy(f.gitter,0,gitter,0,16);
-		xfree=f.xfree;
+	public Board() { }
+		
+	public Board(Board f) {
+		System.arraycopy(f.cells,0,cells,0,16);
+		freeCellCount=f.freeCellCount;
 	}
 
 	
-	public Boolean isEqual(Feld f) {
+	public Boolean isEqual(Board f) {
 		for (int i=0;i<16;i++)
-				if (gitter[i] != f.gitter[i])
+				if (cells[i] != f.cells[i])
 					return false;
 		return true;
 		
@@ -39,7 +37,7 @@ public class Feld {
 	public void dump() {
 		for (int i=0;i<4;i++) {
 			for (int j=0;j<4;j++) {
-				System.out.printf("%4d ",gitter[i*4+j]==0 ? 0 : (1<<gitter[i*4+j]));
+				System.out.printf("%4d ",cells[i*4+j]==0 ? 0 : (1<<cells[i*4+j]));
 			}
 			System.out.println();
 		}
@@ -48,15 +46,15 @@ public class Feld {
 	
 	
 	public Boolean zufall() {
-		if (xfree==0)
+		if (freeCellCount==0)
 			return false;
 		byte value=random.nextInt(4)>1 ? (byte)1 : (byte)2;
-		int count=random.nextInt(xfree);
+		int count=random.nextInt(freeCellCount);
 		for (int i=0;i<16;i++)
-				if (gitter[i]==0)
+				if (cells[i]==0)
 					if (count--==0) {
-						gitter[i]=value;
-						xfree--;
+						cells[i]=value;
+						freeCellCount--;
 						return true;
 					}
 		// not reached
@@ -82,7 +80,7 @@ public class Feld {
 			if (read<4 && array[read]==array[write]) {
 				array[write]++;
 				read++;
-				xfree++;
+				freeCellCount++;
 			}
 		}		
 	}
@@ -92,70 +90,70 @@ public class Feld {
 	
 	
 	public Boolean left() {
-		Feld save=new Feld(this);
+		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
-				d[j]=gitter[i*4+j];
+				d[j]=cells[i*4+j];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[i*4+j]=d[j];
+				cells[i*4+j]=d[j];
 		}	
 		return !isEqual(save);
 	}
 
 	public Boolean right() {
-		Feld save=new Feld(this);
+		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
-				d[3-j]=gitter[i*4+j];
+				d[3-j]=cells[i*4+j];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[i*4+j]=d[3-j];
+				cells[i*4+j]=d[3-j];
 		}	
 		return !isEqual(save);
 	}
 
 	
 	public Boolean up() {
-		Feld save=new Feld(this);
+		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
-				d[j]=gitter[j*4+i];
+				d[j]=cells[j*4+i];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[j*4+i]=d[j];
+				cells[j*4+i]=d[j];
 		}	
 		return !isEqual(save);
 	}
 	
 	public Boolean down() {
-		Feld save=new Feld(this);
+		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
 			for (int j=0;j<4;j++)
-				d[3-j]=gitter[j*4+i];
+				d[3-j]=cells[j*4+i];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[j*4+i]=d[3-j];
+				cells[j*4+i]=d[3-j];
 		}	
 		return !isEqual(save);
 	}
 	
 	public int get(int i,int j) {
 		if (i>=0&&i<4&&j>=0&&j<4)
-			return gitter[i*4+j];
+			return cells[i*4+j];
 		else
 			return 0;
 	}
 	
 	public void set(int i,int j,int value) {
 		if (i>=0&&i<4&&j>=0&&j<4) {
-			if (gitter[i*4+j]==0) xfree--;
-			if (value==0) xfree++;
-			gitter[i*4+j]=(byte)value;
+			if (cells[i*4+j]==0) freeCellCount--;
+			if (value==0) freeCellCount++;
+			cells[i*4+j]=(byte)value;
 		}
 	}
 

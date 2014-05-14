@@ -2,7 +2,7 @@ package de.mpg.molgen.buczek.g2048;
 
 public abstract class GameTree {
 
-	Feld				feld;
+	Board				board;
 	double				value;
 	GameTree			children[];
 	
