@@ -9,7 +9,7 @@ public class Feld {
 	}
 	
 	
-	private int gitter[][]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+	private int gitter[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	private int xfree=16;
 	
 	int free() { return xfree; }
@@ -18,17 +18,14 @@ public class Feld {
 	}
 	
 	public Feld(Feld f) {
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++) gitter[i][j]=f.gitter[i][j];
-			// not faster: System.arraycopy(f.gitter[i],0,gitter[i],0,4);
+		System.arraycopy(f.gitter,0,gitter,0,16);
 		xfree=f.xfree;
 	}
 
 	
 	public Boolean isEqual(Feld f) {
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++)
-				if (gitter[i][j] != f.gitter[i][j])
+		for (int i=0;i<16;i++)
+				if (gitter[i] != f.gitter[i])
 					return false;
 		return true;
 		
@@ -37,7 +34,7 @@ public class Feld {
 	public void dump() {
 		for (int i=0;i<4;i++) {
 			for (int j=0;j<4;j++) {
-				System.out.printf("%4d ",gitter[i][j]);
+				System.out.printf("%4d ",gitter[i*4+j]);
 			}
 			System.out.println();
 		}
@@ -51,10 +48,10 @@ public class Feld {
 		int value=random.nextInt(4)>1 ? 2 : 4;
 		int count=random.nextInt(xfree);
 		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++) 
-				if (gitter[i][j]==0)
+			for (int j=0;j<4;j++)
+				if (gitter[i*4+j]==0)
 					if (count--==0) {
-						gitter[i][j]=value;
+						gitter[i*4+j]=value;
 						xfree--;
 						return true;
 					}
@@ -88,10 +85,10 @@ public class Feld {
 		for (int i=0;i<4;i++) {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
-				d[j]=gitter[i][j];
+				d[j]=gitter[i*4+j];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[i][j]=d[j];
+				gitter[i*4+j]=d[j];
 		}	
 		return !isEqual(save);
 	}
@@ -101,10 +98,10 @@ public class Feld {
 		for (int i=0;i<4;i++) {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
-				d[3-j]=gitter[i][j];
+				d[3-j]=gitter[i*4+j];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[i][j]=d[3-j];
+				gitter[i*4+j]=d[3-j];
 		}	
 		return !isEqual(save);
 	}
@@ -115,10 +112,10 @@ public class Feld {
 		for (int i=0;i<4;i++) {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
-				d[j]=gitter[j][i];
+				d[j]=gitter[j*4+i];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[j][i]=d[j];
+				gitter[j*4+i]=d[j];
 		}	
 		return !isEqual(save);
 	}
@@ -128,30 +125,24 @@ public class Feld {
 		for (int i=0;i<4;i++) {
 			int d[]=new int[4];
 			for (int j=0;j<4;j++)
-				d[3-j]=gitter[j][i];
+				d[3-j]=gitter[j*4+i];
 			shift(d);
 			for (int j=0;j<4;j++)
-				gitter[j][i]=d[3-j];
+				gitter[j*4+i]=d[3-j];
 		}	
 		return !isEqual(save);
 	}
 	
 	public int get(int i,int j) {
-		try {
-			return gitter[i][j];
-		} catch (ArrayIndexOutOfBoundsException e) {
+		if (i>=0&&i<4&&j>=0&&j<4)
+			return gitter[i*4+j];
+		else
 			return 0;
-		}
 	}
 	
 	public void set(int i,int j,int value) {
-		try {
-			if (gitter[i][j]==0) xfree--;
-			if (value==0) xfree++;
-			gitter[i][j]=value;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			;
-		}
+		if (i>=0&&i<4&&j>=0&&j<4)
+			gitter[i*4+j]=value;
 	}
 
 	public Boolean move(int direction) {
