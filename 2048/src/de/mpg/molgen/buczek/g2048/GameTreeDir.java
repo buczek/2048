@@ -1,9 +1,9 @@
 package de.mpg.molgen.buczek.g2048;
 
-
-
 public class GameTreeDir extends GameTree {
 
+	public final int PRUNE_VALUE=9;
+	
 	int best_child=0;
 
 	public GameTreeDir() {}
@@ -80,7 +80,7 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=9) {
+		if (max_free_count<2 || maxDepth<=0 || value>=PRUNE_VALUE) {
 			return;
 		}
 
