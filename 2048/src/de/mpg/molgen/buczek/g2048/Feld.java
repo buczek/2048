@@ -47,11 +47,10 @@ public class Feld {
 			return false;
 		int value=random.nextInt(4)>1 ? 2 : 4;
 		int count=random.nextInt(xfree);
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++)
-				if (gitter[i*4+j]==0)
+		for (int i=0;i<16;i++)
+				if (gitter[i]==0)
 					if (count--==0) {
-						gitter[i*4+j]=value;
+						gitter[i]=value;
 						xfree--;
 						return true;
 					}
@@ -141,8 +140,11 @@ public class Feld {
 	}
 	
 	public void set(int i,int j,int value) {
-		if (i>=0&&i<4&&j>=0&&j<4)
+		if (i>=0&&i<4&&j>=0&&j<4) {
+			if (gitter[i*4+j]==0) xfree--;
+			if (value==0) xfree++;
 			gitter[i*4+j]=value;
+		}
 	}
 
 	public Boolean move(int direction) {
