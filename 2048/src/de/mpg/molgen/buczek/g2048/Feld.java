@@ -66,7 +66,13 @@ public class Feld {
 	}
 
 	
-	
+/*
+	public native void shift(byte array[]);
+	static {
+		System.loadLibrary("shift");
+	}
+*/
+
 	public  void shift(byte array[]) {
 		int read=0;
 		for (int write=0;write<4;write++) {
@@ -165,5 +171,4 @@ public class Feld {
 
 	
 }
-	
-	
+
