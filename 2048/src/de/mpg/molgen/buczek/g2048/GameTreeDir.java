@@ -55,7 +55,7 @@ public class GameTreeDir extends GameTree {
 		run(maxDepth);
 		children=null;
 	}
-	
+		
 	
 	public void run (int maxDepth) {
 
@@ -80,16 +80,18 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=8) {
+		if (max_free_count<2 || maxDepth<=0 || value>=10) {
 			return;
 		}
 
 		for (int i=0;i<children.length;i++) {
 			if (children[i]!=null) {
 				children[i].run(maxDepth-1);
+				// ThreadScheduler.run(children[i],maxDepth-1);
 			}
 		}
-
+		// ThreadScheduler.waitAll();
+		
 		value=computeValueFromChildren();			
 	}
 
