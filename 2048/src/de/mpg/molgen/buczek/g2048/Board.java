@@ -45,7 +45,7 @@ public class Board {
 	}
 	
 	
-	public Boolean zufall() {
+	public Boolean setRandomPiece() {
 		if (freeCellCount==0)
 			return false;
 		byte value=random.nextInt(4)>1 ? (byte)1 : (byte)2;
@@ -86,9 +86,6 @@ public class Board {
 	}
 	
 
-	
-	
-	
 	public Boolean left() {
 		Board save=new Board(this);
 		for (int i=0;i<4;i++) {

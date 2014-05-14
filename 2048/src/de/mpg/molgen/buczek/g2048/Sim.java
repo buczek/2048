@@ -2,63 +2,21 @@ package de.mpg.molgen.buczek.g2048;
 
 public class Sim {
 
+	public final int MAX_DEPTH=3;
 	
-	Board f=new Board();
+	Board board=new Board();
 
-	void zufall() {
-		System.out.println("set");
-		f.zufall();
-		f.dump();
+	void setRandomPiece() {
+		System.out.println("set new random piece");
+		board.setRandomPiece();
+		board.dump();
 	}
-	
-	
-	Boolean down() {
-		if (f.down()) {
-			System.out.println("DOWN");
-			f.dump();
-			zufall();
-			return true;
-		}
-		return false;
-	}
-	
-	Boolean up() {
-		if (f.up()) {
-			System.out.println("UP");
-			f.dump();
-			zufall();
-			return true;
-		}
-		return false;
-	}
-	
-	Boolean left() {
-		if (f.left()) {
-			System.out.println("LEFT");
-			f.dump();
-			zufall();
-			return true;
-		}
-		return false;
-	}
-	
-	Boolean right() {
-		if (f.right()) {
-			System.out.println("RIGHT");
-			f.dump();
-			zufall();
-			return true;
-		}
-		return false;
-	}
-
-	static private String D_NAMES[] = {"UP","LEFT","RIGHT","DOWN"};
 		
 	Boolean move(int direction) {
-		if (f.move(direction)) {
-			System.out.println(D_NAMES[direction]);
-			f.dump();
-			zufall();
+		if (board.move(direction)) {
+			System.out.println(Board.D_NAMES[direction]);
+			board.dump();
+			setRandomPiece();
 			return true;			
 		}
 		return false;
@@ -71,27 +29,23 @@ public class Sim {
 		
 		Board.initRandom(1234);
 		
-		
 		System.out.println("init...");
-		f.zufall();	
-		f.zufall();
-		f.dump();
+		board.setRandomPiece();	
+		board.setRandomPiece();
+		board.dump();
 		System.out.println("run....");
 
 		
 		while (true) {
 
-			GameTreeDir gameTree = new GameTreeDir(f);
+			GameTreeDir gameTree = new GameTreeDir(board);
 
-			//int depth=f.free()>8 ? 4 : 6;
-			//int depth=f.free()>8 ? 4 : f.free()>4 ? 6 : 8;
-
-			
+			// int depth=f.free()>8 ? 4 : 6;
+			// int depth=f.free()>8 ? 4 : f.free()>4 ? 6 : 8;			
 			// int depth=f.free()>4 ? 2 : f.free()>3 ? 3 : 4;
 			// int depth=f.free()>6 ? 2 : 4;
 			// int depth=3;
-			int depth=5;
-			// System.out.println("depth "+depth);
+			int depth=MAX_DEPTH;
 			gameTree.run(depth);
 			
 			int direction=gameTree.getBestDirection();
