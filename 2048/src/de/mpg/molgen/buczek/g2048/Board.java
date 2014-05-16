@@ -64,14 +64,10 @@ public class Board {
 	}
 
 	
-/*
-	public native void shift(byte array[]);
-	static {
-		System.loadLibrary("shift");
-	}
-*/
 
-	public  void shift(byte array[]) {
+
+
+	private  void shift(byte array[]) {
 		int read=0;
 		for (int write=0;write<4;write++) {
 			while (read<4 && array[read]==0) read++;
@@ -86,7 +82,7 @@ public class Board {
 	}
 	
 
-	public Boolean left() {
+	private Boolean left() {
 		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
@@ -99,7 +95,7 @@ public class Board {
 		return !isEqual(save);
 	}
 
-	public Boolean right() {
+	private Boolean right() {
 		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
@@ -113,7 +109,7 @@ public class Board {
 	}
 
 	
-	public Boolean up() {
+	private Boolean up() {
 		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
@@ -126,7 +122,7 @@ public class Board {
 		return !isEqual(save);
 	}
 	
-	public Boolean down() {
+	private Boolean down() {
 		Board save=new Board(this);
 		for (int i=0;i<4;i++) {
 			byte d[]=new byte[4];
@@ -164,6 +160,16 @@ public class Board {
 		return false;
 	}
 
+/*
+	public native boolean move(int direction);
+	static {
+		System.loadLibrary("shift");
+	}
+*/
+
+
+	
+	
 	
 }
 

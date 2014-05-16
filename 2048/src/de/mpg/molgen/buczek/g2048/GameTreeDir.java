@@ -64,7 +64,7 @@ public class GameTreeDir extends GameTree {
 		int	free[]=new int[4];
 
 		for (int d=0;d<4;d++) {
-			free[d]=children[d]!=null ? children[d].board.getFreeCellCount() : 0;
+			free[d]=children[d]!=null ? (int)children[d].board.getFreeCellCount() : 0;
 		}
 		
 		int max_free_count=0;

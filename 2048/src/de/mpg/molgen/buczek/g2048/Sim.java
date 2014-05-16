@@ -27,7 +27,6 @@ public class Sim {
 	
 	void main() {
 		
-		Board.initRandom(1234);
 		
 		System.out.println("init...");
 		board.setRandomPiece();	
@@ -40,12 +39,11 @@ public class Sim {
 
 			GameTreeDir gameTree = new GameTreeDir(board);
 
-			// int depth=f.free()>8 ? 4 : 6;
-			// int depth=f.free()>8 ? 4 : f.free()>4 ? 6 : 8;			
-			// int depth=f.free()>4 ? 2 : f.free()>3 ? 3 : 4;
-			// int depth=f.free()>6 ? 2 : 4;
-			// int depth=3;
-			int depth=MAX_DEPTH;
+
+			int freeCellCount=board.getFreeCellCount();
+			int depth=freeCellCount>=8 ? MAX_DEPTH-2 : freeCellCount >=5 ? MAX_DEPTH-1 : MAX_DEPTH;
+
+			
 			gameTree.run(depth);
 			
 			int direction=gameTree.getBestDirection();
@@ -54,15 +52,20 @@ public class Sim {
 				System.out.println("no moves left");
 				break;
 			}
-			
 		}
-			
 	}
 		
 
 	
 	
 	public static void main(String[] args) {
+
+
+		if (args.length>0) {
+			
+			Board.initRandom(new Integer(args[0]));
+		}
+		
 		Sim sim=new Sim();
 		sim.main();
 	}
