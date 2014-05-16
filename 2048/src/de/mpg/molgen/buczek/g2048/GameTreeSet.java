@@ -32,6 +32,7 @@ public class GameTreeSet extends GameTree {
 	public double computeValueFromChildren() {
 
 		double sum=0;
+
 		int i;
 		for (i=0;i<children.length/2;i++) {
 			sum+=children[i].value*3;
@@ -48,7 +49,7 @@ public class GameTreeSet extends GameTree {
 	public void run (int maxDepth) {
 
 		if (board.getFreeCellCount()==0) {
-			value=Integer.MIN_VALUE;
+			value=0;
 			return;
 		}
 

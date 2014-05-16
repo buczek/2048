@@ -12,11 +12,36 @@ public class GameTreeDir extends GameTree {
 		this.board=new Board (board);
 	}
 
-	int getBestDirection() {
 
-		for (int d=0;d<4;d++)
-			if (children[d]!=null)
-					System.out.printf(" %-5s : %16.14f\n",Board.D_NAMES[d],children[d].value);
+	
+	private static double computeBonus(Board board) {
+		int maxValue=0;
+		boolean maxOnEdge=false;
+		boolean maxInCorner=false;
+		for (int i=0;i<4;i++)
+			for (int j=0;j<4;j++) {
+				int value=board.get(i,j);
+				if (value>maxValue) {
+					maxValue=value;
+					maxOnEdge= (i==0||i==3||j==0||j==3);
+					maxInCorner= (i==0||i==3) && (j==0||j==3);
+				}
+			}
+
+		return maxInCorner ? 0.75 : maxOnEdge ? 0.25 : 0;
+	}
+
+	
+	int getBestDirection() {		
+
+
+		for (int i=0;i<4;i++)
+			if (children[i]!=null) {
+				double bonus=computeBonus(children[i].board);
+				System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[i],children[i].value,bonus);
+				children[i].value+=bonus;
+			}
+		value=computeValueFromChildren();		
 		System.out.println();
 		return best_child;
 	}
@@ -35,6 +60,7 @@ public class GameTreeDir extends GameTree {
 		}
 	}
 
+	
 
 	public double computeValueFromChildren() {
 
@@ -57,26 +83,27 @@ public class GameTreeDir extends GameTree {
 	}
 		
 	
+	
+	
+	
+	
 	public void run (int maxDepth) {
 
 		init_children();
-
-		int	free[]=new int[4];
-
-		for (int d=0;d<4;d++) {
-			free[d]=children[d]!=null ? (int)children[d].board.getFreeCellCount() : 0;
-		}
 		
 		int max_free_count=0;
 		for (int d=0;d<4;d++) {
-			if (free[d]>value) {
-				value=free[d];
-				best_child=d;
-				max_free_count=1;
-			} else if (free[d]==value) {
-				max_free_count++;
-			} else {
-				children[d]=null;
+			if (children[d]!=null) {
+				double childValue=children[d].board.getFreeCellCount();
+				if (childValue>value) {
+					value=childValue;
+					best_child=d;
+					max_free_count=1;
+				} else if (childValue==value) {
+					max_free_count++;
+				} else {
+					// children[d]=null;
+				}				
 			}
 		}
 
