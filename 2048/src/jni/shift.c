@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <jni.h>
 #include <stdlib.h>
 
 JNIEXPORT void JNICALL Java_de_mpg_molgen_buczek_g2048_Feld_shift
