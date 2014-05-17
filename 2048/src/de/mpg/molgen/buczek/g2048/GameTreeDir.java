@@ -1,9 +1,28 @@
 package de.mpg.molgen.buczek.g2048;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class GameTreeDir extends GameTree {
 
 	public final int PRUNE_VALUE=9;
+
+	final static int MAX_THREADS=10;
 	
+	static ExecutorService executorService=Executors.newFixedThreadPool(MAX_THREADS);
+	static class MyRunnable implements Runnable {
+		GameTree gameTree;
+		int maxDepth;
+		MyRunnable(GameTree gameTree,int maxDepth) {
+			this.gameTree=gameTree;
+			this.maxDepth=maxDepth;
+		}
+		public void run() {
+			gameTree.run(maxDepth);
+		}
+	}
+
 	int best_child=0;
 
 	public GameTreeDir() {}
@@ -90,7 +109,7 @@ public class GameTreeDir extends GameTree {
 	public void run (int maxDepth) {
 
 		init_children();
-		
+
 		int max_free_count=0;
 		for (int d=0;d<4;d++) {
 			if (children[d]!=null) {
@@ -111,17 +130,35 @@ public class GameTreeDir extends GameTree {
 			return;
 		}
 
-		for (int i=0;i<children.length;i++) {
-			if (children[i]!=null) {
-				children[i].run(maxDepth-1);
-				// ThreadScheduler.run(children[i],maxDepth-1);
+		if (maxDepth>1) {		
+			for (int i=0;i<children.length;i++) {
+				if (children[i]!=null) {
+					children[i].run(maxDepth-1);
+				}
 			}
+		} else {
+
+			Future<?>[] futures=new Future<?>[children.length];
+
+			for (int i=0;i<children.length;i++) {
+				if (children[i]!=null) {
+					futures[i]=executorService.submit(new MyRunnable(children[i],maxDepth-1));
+				}
+			}
+			for (int i=0;i<children.length;i++) {
+				if (children[i]!=null) {
+					try {
+						futures[i].get();
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.exit(1);
+					}
+				}
+			}
+
+			value=computeValueFromChildren();			
 		}
-		// ThreadScheduler.waitAll();
-		
-		value=computeValueFromChildren();			
+
 	}
-
-
 
 }
