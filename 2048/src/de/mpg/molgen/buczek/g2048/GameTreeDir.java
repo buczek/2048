@@ -37,7 +37,8 @@ public class GameTreeDir extends GameTree {
 
 		for (int i=0;i<4;i++)
 			if (children[i]!=null) {
-				double bonus=computeBonus(children[i].board);
+				double bonus=0;
+				//double bonus=computeBonus(children[i].board);
 				System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[i],children[i].value,bonus);
 				children[i].value+=bonus;
 			}

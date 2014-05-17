@@ -35,14 +35,14 @@ public class GameTreeSet extends GameTree {
 
 		int i;
 		for (i=0;i<children.length/2;i++) {
-			sum+=children[i].value*3;
+			sum+=children[i].value*9;
 		}
 
 		for (;i<children.length;i++) {
 			sum+=children[i].value;
 		}
 
-		return sum/children.length/2;
+		return sum/(children.length/2)/10;
 	}
 	
 

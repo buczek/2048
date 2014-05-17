@@ -48,7 +48,7 @@ public class Board {
 	public Boolean setRandomPiece() {
 		if (freeCellCount==0)
 			return false;
-		byte value=random.nextInt(4)>1 ? (byte)1 : (byte)2;
+		byte value=random.nextInt(10)>1 ? (byte)1 : (byte)2;
 		int count=random.nextInt(freeCellCount);
 		for (int i=0;i<16;i++)
 				if (cells[i]==0)
