@@ -4,7 +4,7 @@ package de.mpg.molgen.buczek.g2048;
 
 public class Sim {
 
-	public final int MAX_DEPTH=6;
+	public static final int MAX_DEPTH=6;
 	
 	Board board=new Board();
 
@@ -29,14 +29,15 @@ public class Sim {
 	
 	void main() {
 		
-		
-		System.out.println("init...");
+		System.out.println("MAX_DEPTH:   "+MAX_DEPTH);
+		System.out.println("MAX_THREADS: "+GameTreeDir.MAX_THREADS);
+
 		board.setRandomPiece();	
 		board.setRandomPiece();
 		board.dump();
+
 		System.out.println("run....");
 
-		
 		while (true) {
 
 			GameTreeDir gameTree = new GameTreeDir(board);
