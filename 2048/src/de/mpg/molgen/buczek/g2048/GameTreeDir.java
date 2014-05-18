@@ -6,11 +6,9 @@ import java.util.concurrent.Future;
 
 public class GameTreeDir extends GameTree {
 
-	public final int PRUNE_VALUE=9;
 
-	final static int MAX_THREADS=10;
 	
-	static ExecutorService executorService=Executors.newFixedThreadPool(MAX_THREADS);
+	static ExecutorService executorService=Executors.newFixedThreadPool(Sim.MAX_THREADS);
 	static class MyRunnable implements Runnable {
 		GameTree gameTree;
 		int maxDepth;
@@ -110,6 +108,7 @@ public class GameTreeDir extends GameTree {
 	public void run (int maxDepth) {
 
 		init_children();
+		// System.out.println("GameTreeSet.run at level "+maxDepth);
 
 		int max_free_count=0;
 		for (int d=0;d<4;d++) {
@@ -127,25 +126,21 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=PRUNE_VALUE) {
+		if (max_free_count<2 || maxDepth<=0 || value>=Sim.PRUNE_VALUE) {
 			return;
 		}
 
-		if (maxDepth>1) {		
-			for (int i=0;i<children.length;i++) {
-				if (children[i]!=null) {
-					children[i].run(maxDepth-1);
-				}
-			}
-		} else {
-
+		if (maxDepth==50 /*never*/ ) {
 			Future<?>[] futures=new Future<?>[children.length];
 
+			int numberChildren=0;
 			for (int i=0;i<children.length;i++) {
 				if (children[i]!=null) {
 					futures[i]=executorService.submit(new MyRunnable(children[i],maxDepth-1));
+					numberChildren++;
 				}
 			}
+			System.out.println("wait for "+numberChildren+" children");
 			for (int i=0;i<children.length;i++) {
 				if (children[i]!=null) {
 					try {
@@ -155,10 +150,16 @@ public class GameTreeDir extends GameTree {
 						System.exit(1);
 					}
 				}
-			}
-
-			value=computeValueFromChildren();			
+			}			
+		} else {
+			for (int i=0;i<children.length;i++) {
+				if (children[i]!=null) {
+					children[i].run(maxDepth-1);
+				}
+			}			
 		}
+			
+		value=computeValueFromChildren();			
 
 	}
 
