@@ -54,9 +54,9 @@ public class Sim {
 	public static void main(String[] args) {
 
 		System.out.println("MAX_DEPTH:   "+MAX_DEPTH);
-		System.out.println("RANDOM:      "+args[0]);
 
 		if (args.length>0) {			
+			System.out.println("RANDOM:      "+args[0]);
 			Board.initRandom(new Integer(args[0]));
 		}
 		
