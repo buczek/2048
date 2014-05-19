@@ -15,32 +15,13 @@ public class GameTreeDir extends GameTree {
 		this.board=new Board (board);
 	}
 	
-	private static double computeBonus(Board board) {
-		int maxValue=0;
-		boolean maxOnEdge=false;
-		boolean maxInCorner=false;
-		for (int i=0;i<4;i++)
-			for (int j=0;j<4;j++) {
-				int value=board.get(i,j);
-				if (value>maxValue) {
-					maxValue=value;
-					maxOnEdge= (i==0||i==3||j==0||j==3);
-					maxInCorner= (i==0||i==3) && (j==0||j==3);
-				}
-			}
-
-		return maxInCorner ? 0.75 : maxOnEdge ? 0.25 : 0;
-	}
-
-	
+		
 	int getBestDirection() {		
 		if (children.length==0)	// no moves left
 			return 0;
 		for (int c=0;c<children.length;c++) {
 			//double bonus=computeBonus(children[i].board);
-			double bonus=0;
-			System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[childrenDirections[c]],children[c].value,bonus);
-			children[c].value+=bonus;
+			System.out.printf(" %-5s : %16.14f\n",Board.D_NAMES[childrenDirections[c]],children[c].value);
 		}
 		System.out.println();
 		return childrenDirections[best_child];
@@ -74,8 +55,6 @@ public class GameTreeDir extends GameTree {
 		}				
 	}
 
-	
-
 	private void computeValueFromChildren() {			// set value and best_child
 
 		value=0;
@@ -90,11 +69,9 @@ public class GameTreeDir extends GameTree {
 	protected void _run () {
 
 		init_children();
-		// System.out.println("GameTreeSet.run at level "+maxDepth);
 
 		computeValueFromChildren();
 
-		// if (children.length<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
 		if (children.length<2 || depth<=0 ) {
 			return;
 		}

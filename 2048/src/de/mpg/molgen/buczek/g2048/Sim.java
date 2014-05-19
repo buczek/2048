@@ -4,10 +4,7 @@ package de.mpg.molgen.buczek.g2048;
 
 public class Sim {
 	
-	public final static int MAX_DEPTH=5;
-	// public final static int MAX_DEPTH=6;
-	//public final static int PRUNE_VALUE=9;
-	public final static int PRUNE_VALUE=100; /* never */ 
+	public final static int MAX_DEPTH=6;
 	
 	Board board=new Board();
 
@@ -31,7 +28,6 @@ public class Sim {
 	
 	void main() {
 		
-
 		board.setRandomPiece();	
 		board.setRandomPiece();
 		board.dump();
@@ -58,7 +54,6 @@ public class Sim {
 	public static void main(String[] args) {
 
 		System.out.println("MAX_DEPTH:   "+MAX_DEPTH);
-		System.out.println("PRUNE_VALUE: "+PRUNE_VALUE);
 		System.out.println("RANDOM:      "+args[0]);
 
 		if (args.length>0) {			

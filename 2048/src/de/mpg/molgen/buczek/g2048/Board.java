@@ -164,17 +164,6 @@ public class Board {
 		}
 		return false;
 	}
-
-/*
-	public native boolean move(int direction);
-	static {
-		System.loadLibrary("shift");
-	}
-*/
-
-
-	
-	
 	
 }
 
