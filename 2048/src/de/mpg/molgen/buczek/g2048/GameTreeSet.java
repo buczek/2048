@@ -1,24 +1,22 @@
 package de.mpg.molgen.buczek.g2048;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveAction;
 
 public class GameTreeSet extends GameTree {
 	
-	static ExecutorService executorService=Executors.newFixedThreadPool(Sim.MAX_THREADS);
-	static class MyRunnable implements Runnable {
+	static class MyRecursiveAction extends RecursiveAction {
+		private static final long serialVersionUID = 1L;
 		GameTreeDir gameTree;
 		int maxDepth;
-		MyRunnable(GameTreeDir gameTree,int maxDepth) {
+		MyRecursiveAction(GameTreeDir gameTree,int maxDepth) {
 			this.gameTree=gameTree;
 			this.maxDepth=maxDepth;
 		}
-		public void run() {
+		protected void compute() {
 			gameTree.run_purge(maxDepth);
 		}
 	}
-
 	
 	
 	public void init_children() {
@@ -64,7 +62,7 @@ public class GameTreeSet extends GameTree {
 	}
 	
 
-	public void run (int maxDepth) {
+	protected void _run (int maxDepth) {
 
 		if (board.getFreeCellCount()==0) {
 			value=0;
@@ -73,22 +71,12 @@ public class GameTreeSet extends GameTree {
 
 		init_children();
 		//System.out.println("GameTreeSet.run at level "+maxDepth);
-		if (maxDepth==2) {
-			Future<?>[] futures=new Future<?>[children.length];
-			int numberChildren=0;
+		if (maxDepth>2) {
+			RecursiveAction actions[]=new RecursiveAction[children.length];
 			for (int i=0;i<children.length;i++) {
-					futures[i]=executorService.submit(new MyRunnable((GameTreeDir)children[i],maxDepth));
-					numberChildren++;
+					actions[i]=new MyRecursiveAction ((GameTreeDir)children[i],maxDepth);					
 			}
-			//System.out.println("wait for "+numberChildren+" children");
-			for (int i=0;i<children.length;i++) {
-					try {
-						futures[i].get();
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.exit(1);
-					}
-			}
+			ForkJoinTask.invokeAll(actions);
 		} else {
 			for (int c=0;c<children.length;c++) {
 				GameTreeDir child=(GameTreeDir)children[c];
@@ -96,6 +84,5 @@ public class GameTreeSet extends GameTree {
 			}
 		}
 		value=computeValueFromChildren();			
-	}
-	
+	}	
 }

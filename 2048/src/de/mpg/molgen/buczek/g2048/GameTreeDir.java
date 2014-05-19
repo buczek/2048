@@ -1,26 +1,24 @@
 package de.mpg.molgen.buczek.g2048;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveAction;
 
 public class GameTreeDir extends GameTree {
 
-
-	
-	static ExecutorService executorService=Executors.newFixedThreadPool(4);
-	static class MyRunnable implements Runnable {
-		GameTree gameTree;
+	static class MyRecursiveAction extends RecursiveAction {
+		private static final long serialVersionUID = 1L;
+		GameTreeSet gameTree;
 		int maxDepth;
-		MyRunnable(GameTree gameTree,int maxDepth) {
+		MyRecursiveAction(GameTreeSet gameTree,int maxDepth) {
 			this.gameTree=gameTree;
 			this.maxDepth=maxDepth;
 		}
-		public void run() {
-			gameTree.run(maxDepth);
+		protected void compute() {
+			gameTree.run_purge(maxDepth);
 		}
 	}
-
+	
+	
 	int best_child=0;
 
 	public GameTreeDir() {}
@@ -70,10 +68,10 @@ public class GameTreeDir extends GameTree {
 		for (int i=0;i<4;i++) {
 			Board childBoard=new Board(board);
 			if (childBoard.move(i)) {
-				GameTreeSet child=new GameTreeSet();
-				child.board=childBoard;
-				child.value=childBoard.getFreeCellCount();
-				children[i]=child;							
+					GameTreeSet child=new GameTreeSet();
+					child.board=childBoard;
+					child.value=childBoard.getFreeCellCount();
+					children[i]=child;
 			}
 		}
 	}
@@ -95,17 +93,9 @@ public class GameTreeDir extends GameTree {
 	}
 
 
-	public void run_purge(int maxDepth) {
-		run(maxDepth);
-		children=null;
-	}
-		
+
 	
-	
-	
-	
-	
-	public void run (int maxDepth) {
+	protected void _run (int maxDepth) {
 
 		init_children();
 		// System.out.println("GameTreeSet.run at level "+maxDepth);
@@ -131,36 +121,25 @@ public class GameTreeDir extends GameTree {
 		}
 
 		if (maxDepth==3 ) {
-			Future<?>[] futures=new Future<?>[children.length];
-
-			int numberChildren=0;
-			for (int i=0;i<children.length;i++) {
-				if (children[i]!=null) {
-					futures[i]=executorService.submit(new MyRunnable(children[i],maxDepth-1));
-					numberChildren++;
-				}
-			}
-			// System.out.println("wait for "+numberChildren+" children");
-			for (int i=0;i<children.length;i++) {
-				if (children[i]!=null) {
-					try {
-						futures[i].get();
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.exit(1);
-					}
-				}
-			}			
+			int validChildrenCount=0;
+			for (int i=0;i<children.length;i++)
+				if (children[i]!=null)
+					validChildrenCount++;
+			RecursiveAction actions[]=new RecursiveAction[validChildrenCount];
+			validChildrenCount=0;
+			for (int i=0;i<children.length;i++)
+				if (children[i]!=null)
+					actions[validChildrenCount++]=new MyRecursiveAction ((GameTreeSet)children[i],maxDepth-1);
+			ForkJoinTask.invokeAll(actions);
 		} else {
 			for (int i=0;i<children.length;i++) {
 				if (children[i]!=null) {
 					children[i].run(maxDepth-1);
 				}
 			}			
-		}
-			
+		}			
 		value=computeValueFromChildren();			
-
 	}
+
 
 }
