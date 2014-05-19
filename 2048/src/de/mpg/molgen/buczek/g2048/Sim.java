@@ -5,7 +5,7 @@ package de.mpg.molgen.buczek.g2048;
 public class Sim {
 
 	public final static int MAX_DEPTH=6;
-	public final static int MAX_THREADS=40;
+	public final static int MAX_THREADS=50;
 	//public final static int PRUNE_VALUE=9;
 	public final static int PRUNE_VALUE=100; /* never */ 
 

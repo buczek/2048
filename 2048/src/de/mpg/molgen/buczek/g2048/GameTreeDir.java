@@ -8,7 +8,7 @@ public class GameTreeDir extends GameTree {
 
 
 	
-	static ExecutorService executorService=Executors.newFixedThreadPool(Sim.MAX_THREADS);
+	static ExecutorService executorService=Executors.newFixedThreadPool(4);
 	static class MyRunnable implements Runnable {
 		GameTree gameTree;
 		int maxDepth;
@@ -130,7 +130,7 @@ public class GameTreeDir extends GameTree {
 			return;
 		}
 
-		if (maxDepth==50 /*never*/ ) {
+		if (maxDepth==3 ) {
 			Future<?>[] futures=new Future<?>[children.length];
 
 			int numberChildren=0;
@@ -140,7 +140,7 @@ public class GameTreeDir extends GameTree {
 					numberChildren++;
 				}
 			}
-			System.out.println("wait for "+numberChildren+" children");
+			// System.out.println("wait for "+numberChildren+" children");
 			for (int i=0;i<children.length;i++) {
 				if (children[i]!=null) {
 					try {
