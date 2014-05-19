@@ -15,14 +15,17 @@ public class Board {
 	// 3 = 8	
 	private byte cells[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	private int  freeCellCount=16;
+	private int  score=0;
 	
 	int getFreeCellCount() { return freeCellCount; }
+	int getScore()         { return score; }
 	
 	public Board() { }
 		
-	public Board(Board f) {
-		System.arraycopy(f.cells,0,cells,0,16);
-		freeCellCount=f.freeCellCount;
+	public Board(Board board) {
+		System.arraycopy(board.cells,0,this.cells,0,16);
+		freeCellCount=board.freeCellCount;
+		score=board.score;
 	}
 
 	
@@ -41,6 +44,7 @@ public class Board {
 			}
 			System.out.println();
 		}
+		System.out.println("Score: "+score);
 		System.out.println();
 	}
 	
@@ -77,6 +81,7 @@ public class Board {
 				array[write]++;
 				read++;
 				freeCellCount++;
+				score+=1<<array[write];
 			}
 		}		
 	}

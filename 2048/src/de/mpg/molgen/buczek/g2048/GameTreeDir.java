@@ -36,10 +36,11 @@ public class GameTreeDir extends GameTree {
 	int getBestDirection() {		
 		if (children.length==0)	// no moves left
 			return 0;
-		for (int i=0;i<children.length;i++) {
-			double bonus=computeBonus(children[i].board);
-			System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[childrenDirections[i]],children[i].value,bonus);
-			children[i].value+=bonus;
+		for (int c=0;c<children.length;c++) {
+			//double bonus=computeBonus(children[i].board);
+			double bonus=0;
+			System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[childrenDirections[c]],children[c].value,bonus);
+			children[c].value+=bonus;
 		}
 		System.out.println();
 		return childrenDirections[best_child];
@@ -64,7 +65,8 @@ public class GameTreeDir extends GameTree {
 				GameTreeSet child=new GameTreeSet();
 				child.depth=depth-1;
 				child.board=childBoards[d];
-				child.value=childBoards[d].getFreeCellCount();
+				//child.value=childBoards[d].getFreeCellCount();
+				child.value=childBoards[d].getScore();
 				children[childrenCount]=child;
 				childrenDirections[childrenCount]=d;
 				childrenCount++;
@@ -77,10 +79,10 @@ public class GameTreeDir extends GameTree {
 	private void computeValueFromChildren() {			// set value and best_child
 
 		value=0;
-		for (int i=0;i<children.length;i++) {
-			if (children[i].value>value) {
-				best_child=i;
-				value=children[i].value;
+		for (int c=0;c<children.length;c++) {
+			if (children[c].value>value) {
+				best_child=c;
+				value=children[c].value;
 			}
 		}
 	}
@@ -92,15 +94,16 @@ public class GameTreeDir extends GameTree {
 
 		computeValueFromChildren();
 
-		if (children.length<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
+		// if (children.length<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
+		if (children.length<2 || depth<=0 ) {
 			return;
 		}
 
 		if (depth>3 ) {
 			ForkJoinTask.invokeAll(children);			
 		} else {
-			for (int i=0;i<children.length;i++) {
-					children[i].run_purge();
+			for (int c=0;c<children.length;c++) {
+					children[c].run_purge();
 			}			
 		}			
 		computeValueFromChildren();			

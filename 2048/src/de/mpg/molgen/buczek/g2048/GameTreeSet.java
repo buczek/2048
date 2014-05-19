@@ -37,13 +37,13 @@ public class GameTreeSet extends GameTree {
 
 		double sum=0;
 
-		int i;
-		for (i=0;i<children.length/2;i++) {
-			sum+=children[i].value*9;
+		int c;
+		for (c=0;c<children.length/2;c++) {
+			sum+=children[c].value*9;
 		}
 
-		for (;i<children.length;i++) {
-			sum+=children[i].value;
+		for (;c<children.length;c++) {
+			sum+=children[c].value;
 		}
 
 		value=sum/(children.length/2)/10;
