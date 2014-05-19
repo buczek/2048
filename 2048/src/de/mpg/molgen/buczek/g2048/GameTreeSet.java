@@ -1,30 +1,22 @@
 package de.mpg.molgen.buczek.g2048;
 
 import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveAction;
 
 public class GameTreeSet extends GameTree {
-	
-	static class MyRecursiveAction extends RecursiveAction {
-		private static final long serialVersionUID = 1L;
-		GameTreeDir gameTree;
-		int maxDepth;
-		MyRecursiveAction(GameTreeDir gameTree,int maxDepth) {
-			this.gameTree=gameTree;
-			this.maxDepth=maxDepth;
-		}
-		protected void compute() {
-			gameTree.run_purge(maxDepth);
-		}
-	}
-	
-	
+		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	public void init_children() {
 		int variants=board.getFreeCellCount()*2;		
 		
 		children=new GameTree[variants];
 		for (int i=0;i<variants;i++) {
 			GameTreeDir child=new GameTreeDir(board);
+			child.depth=depth;
 			children[i]=child;			
 		}
 		
@@ -62,7 +54,8 @@ public class GameTreeSet extends GameTree {
 	}
 	
 
-	protected void _run (int maxDepth) {
+	protected void _run () {
+
 
 		if (board.getFreeCellCount()==0) {
 			value=0;
@@ -70,17 +63,12 @@ public class GameTreeSet extends GameTree {
 		}
 
 		init_children();
-		//System.out.println("GameTreeSet.run at level "+maxDepth);
-		if (maxDepth>2) {
-			RecursiveAction actions[]=new RecursiveAction[children.length];
-			for (int i=0;i<children.length;i++) {
-					actions[i]=new MyRecursiveAction ((GameTreeDir)children[i],maxDepth);					
-			}
-			ForkJoinTask.invokeAll(actions);
+		if (depth>2) {
+			ForkJoinTask.invokeAll(children);
 		} else {
 			for (int c=0;c<children.length;c++) {
 				GameTreeDir child=(GameTreeDir)children[c];
-				child.run_purge(maxDepth);		
+				child.run_purge();		
 			}
 		}
 		value=computeValueFromChildren();			

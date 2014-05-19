@@ -5,20 +5,7 @@ import java.util.concurrent.RecursiveAction;
 
 public class GameTreeDir extends GameTree {
 
-	static class MyRecursiveAction extends RecursiveAction {
-		private static final long serialVersionUID = 1L;
-		GameTreeSet gameTree;
-		int maxDepth;
-		MyRecursiveAction(GameTreeSet gameTree,int maxDepth) {
-			this.gameTree=gameTree;
-			this.maxDepth=maxDepth;
-		}
-		protected void compute() {
-			gameTree.run_purge(maxDepth);
-		}
-	}
-	
-	
+	private static final long serialVersionUID = 1L;
 	int best_child=0;
 
 	public GameTreeDir() {}
@@ -69,6 +56,7 @@ public class GameTreeDir extends GameTree {
 			Board childBoard=new Board(board);
 			if (childBoard.move(i)) {
 					GameTreeSet child=new GameTreeSet();
+					child.depth=depth-1;
 					child.board=childBoard;
 					child.value=childBoard.getFreeCellCount();
 					children[i]=child;
@@ -95,7 +83,7 @@ public class GameTreeDir extends GameTree {
 
 
 	
-	protected void _run (int maxDepth) {
+	protected void _run () {
 
 		init_children();
 		// System.out.println("GameTreeSet.run at level "+maxDepth);
@@ -116,11 +104,11 @@ public class GameTreeDir extends GameTree {
 			}
 		}
 
-		if (max_free_count<2 || maxDepth<=0 || value>=Sim.PRUNE_VALUE) {
+		if (max_free_count<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
 			return;
 		}
 
-		if (maxDepth==3 ) {
+		if (depth>3 ) {
 			int validChildrenCount=0;
 			for (int i=0;i<children.length;i++)
 				if (children[i]!=null)
@@ -129,12 +117,12 @@ public class GameTreeDir extends GameTree {
 			validChildrenCount=0;
 			for (int i=0;i<children.length;i++)
 				if (children[i]!=null)
-					actions[validChildrenCount++]=new MyRecursiveAction ((GameTreeSet)children[i],maxDepth-1);
-			ForkJoinTask.invokeAll(actions);
+					actions[validChildrenCount++]=children[i];
+				ForkJoinTask.invokeAll(actions);
 		} else {
 			for (int i=0;i<children.length;i++) {
 				if (children[i]!=null) {
-					children[i].run(maxDepth-1);
+					children[i].run_purge();
 				}
 			}			
 		}			
