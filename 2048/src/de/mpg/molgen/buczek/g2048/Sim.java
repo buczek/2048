@@ -4,7 +4,8 @@ package de.mpg.molgen.buczek.g2048;
 
 public class Sim {
 	
-	public final static int MAX_DEPTH=6;
+	public final static int MAX_DEPTH=4;
+	// public final static int MAX_DEPTH=6;
 	//public final static int PRUNE_VALUE=9;
 	public final static int PRUNE_VALUE=100; /* never */ 
 	
@@ -26,7 +27,6 @@ public class Sim {
 		return false;
 	}
 
-	 
 	
 	
 	void main() {
@@ -39,15 +39,12 @@ public class Sim {
 		System.out.println("run....");
 
 		while (true) {
-
 			GameTreeDir gameTree = new GameTreeDir(board);
-
 
 			int freeCellCount=board.getFreeCellCount();
 			int depth=freeCellCount>=8 ? MAX_DEPTH-2 : freeCellCount >=5 ? MAX_DEPTH-1 : MAX_DEPTH;
-
 			
-			gameTree.run(depth);
+			gameTree.run(MAX_DEPTH);
 			
 			int direction=gameTree.getBestDirection();
 			
@@ -58,9 +55,6 @@ public class Sim {
 		}
 	}
 		
-
-	
-	
 	public static void main(String[] args) {
 
 		System.out.println("MAX_DEPTH:   "+MAX_DEPTH);

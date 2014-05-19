@@ -5,13 +5,13 @@ import java.util.concurrent.RecursiveAction;
 
 public abstract class GameTree extends RecursiveAction {
 
+	private static final long serialVersionUID = 1L;
 	protected Board				board;
 	protected double			value;
 	protected GameTree			children[];
 	protected int 				depth;			// remaining depth
 	
 	public abstract void    init_children();
-	public abstract double  computeValueFromChildren();
 
 	public double getValue() {
 		return value;

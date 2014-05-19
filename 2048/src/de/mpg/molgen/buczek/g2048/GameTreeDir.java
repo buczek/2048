@@ -1,20 +1,19 @@
 package de.mpg.molgen.buczek.g2048;
 
 import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveAction;
 
 public class GameTreeDir extends GameTree {
 
 	private static final long serialVersionUID = 1L;
-	int best_child=0;
 
+	int best_child=0;
+	int	childrenDirections[];
+		
 	public GameTreeDir() {}
 
 	public GameTreeDir(Board board) {
 		this.board=new Board (board);
 	}
-
-
 	
 	private static double computeBonus(Board board) {
 		int maxValue=0;
@@ -35,99 +34,75 @@ public class GameTreeDir extends GameTree {
 
 	
 	int getBestDirection() {		
-
-
-		for (int i=0;i<4;i++)
-			if (children[i]!=null) {
-				double bonus=computeBonus(children[i].board);
-				//double bonus=computeBonus(children[i].board);
-				System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[i],children[i].value,bonus);
-				children[i].value+=bonus;
-			}
-		value=computeValueFromChildren();		
+		if (children.length==0)	// no moves left
+			return 0;
+		for (int i=0;i<children.length;i++) {
+			double bonus=computeBonus(children[i].board);
+			System.out.printf(" %-5s : %16.14f bonus %5.3f\n",Board.D_NAMES[childrenDirections[i]],children[i].value,bonus);
+			children[i].value+=bonus;
+		}
 		System.out.println();
-		return best_child;
+		return childrenDirections[best_child];
 	}
 
 
 	public void init_children() {
-		children=new GameTree[4];
-		for (int i=0;i<4;i++) {
+		Board childBoards[] = new Board[4];
+		int childrenCount=0;
+		for (int d=0;d<4;d++) {
 			Board childBoard=new Board(board);
-			if (childBoard.move(i)) {
-					GameTreeSet child=new GameTreeSet();
-					child.depth=depth-1;
-					child.board=childBoard;
-					child.value=childBoard.getFreeCellCount();
-					children[i]=child;
+			if (childBoard.move(d)) {
+					childrenCount++;
+					childBoards[d]=childBoard;
 			}
 		}
+		children=new GameTreeSet[childrenCount];
+		childrenDirections=new int[childrenCount];
+		childrenCount=0;
+		for (int d=0;d<4;d++) {
+			if (childBoards[d]!=null) {
+				GameTreeSet child=new GameTreeSet();
+				child.depth=depth-1;
+				child.board=childBoards[d];
+				child.value=childBoards[d].getFreeCellCount();
+				children[childrenCount]=child;
+				childrenDirections[childrenCount]=d;
+				childrenCount++;
+			}
+		}				
 	}
 
 	
 
-	public double computeValueFromChildren() {
+	private void computeValueFromChildren() {			// set value and best_child
 
-		double max_value=0;
+		value=0;
 		for (int i=0;i<children.length;i++) {
-			if (children[i]!=null) {
-				if (children[i].value>max_value) {
-					best_child=i;
-					max_value=children[i].value;
-				}
+			if (children[i].value>value) {
+				best_child=i;
+				value=children[i].value;
 			}
 		}
-		return max_value;
 	}
-
-
-
 	
 	protected void _run () {
 
 		init_children();
 		// System.out.println("GameTreeSet.run at level "+maxDepth);
 
-		int max_free_count=0;
-		for (int d=0;d<4;d++) {
-			if (children[d]!=null) {
-				double childValue=children[d].board.getFreeCellCount();
-				if (childValue>value) {
-					value=childValue;
-					best_child=d;
-					max_free_count=1;
-				} else if (childValue==value) {
-					max_free_count++;
-				} else {
-					// children[d]=null;
-				}				
-			}
-		}
+		computeValueFromChildren();
 
-		if (max_free_count<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
+		if (children.length<2 || depth<=0 || value>=Sim.PRUNE_VALUE) {
 			return;
 		}
 
 		if (depth>3 ) {
-			int validChildrenCount=0;
-			for (int i=0;i<children.length;i++)
-				if (children[i]!=null)
-					validChildrenCount++;
-			RecursiveAction actions[]=new RecursiveAction[validChildrenCount];
-			validChildrenCount=0;
-			for (int i=0;i<children.length;i++)
-				if (children[i]!=null)
-					actions[validChildrenCount++]=children[i];
-				ForkJoinTask.invokeAll(actions);
+			ForkJoinTask.invokeAll(children);			
 		} else {
 			for (int i=0;i<children.length;i++) {
-				if (children[i]!=null) {
 					children[i].run_purge();
-				}
 			}			
 		}			
-		value=computeValueFromChildren();			
+		computeValueFromChildren();			
 	}
-
-
 }

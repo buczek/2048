@@ -4,11 +4,7 @@ import java.util.concurrent.ForkJoinTask;
 
 public class GameTreeSet extends GameTree {
 		
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
 
 	public void init_children() {
 		int variants=board.getFreeCellCount()*2;		
@@ -37,7 +33,7 @@ public class GameTreeSet extends GameTree {
 
 	}
 
-	public double computeValueFromChildren() {
+	private void computeValueFromChildren() {
 
 		double sum=0;
 
@@ -50,7 +46,7 @@ public class GameTreeSet extends GameTree {
 			sum+=children[i].value;
 		}
 
-		return sum/(children.length/2)/10;
+		value=sum/(children.length/2)/10;
 	}
 	
 
@@ -71,6 +67,6 @@ public class GameTreeSet extends GameTree {
 				child.run_purge();		
 			}
 		}
-		value=computeValueFromChildren();			
+		computeValueFromChildren();			
 	}	
 }
