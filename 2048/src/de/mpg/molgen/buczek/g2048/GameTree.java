@@ -39,6 +39,10 @@ public abstract class GameTree extends RecursiveAction {
 	protected void compute() {
 		run_purge();
 	}
+	public void setMaxThreads(int n) {
+		forkJoinPool=new ForkJoinPool(n);
+		
+	}
 
 	
 }

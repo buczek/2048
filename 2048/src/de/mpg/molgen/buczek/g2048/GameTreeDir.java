@@ -14,8 +14,8 @@ public class GameTreeDir extends GameTree {
 	public GameTreeDir(Board board) {
 		this.board=new Board (board);
 	}
-	
-		
+
+			
 	int getBestDirection() {		
 		if (children.length==0)	// no moves left
 			return 0;
