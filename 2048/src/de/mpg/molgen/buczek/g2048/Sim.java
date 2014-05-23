@@ -1,10 +1,6 @@
 package de.mpg.molgen.buczek.g2048;
 
-import de.mpg.molgen.buczek.g2048.CommandLineParser.OptionProcessor;
-
-
-
-public class Sim implements CommandLineParser.OptionsCreator {
+public class Sim  {
 	
 	public int MAX_DEPTH=6;
 	public int maxThreads=0;
@@ -29,43 +25,9 @@ public class Sim implements CommandLineParser.OptionsCreator {
 
 	private static void die(String message) {System.err.println(message);System.exit(1);}
 
-	static final String USAGE="usage: [options] [random-seed]\n" +
-			"  --max-depth n     : max game tree depth\n" +
-			"  --max-threads n   : max threads\n";
-
-	public void createOptions(OptionProcessor op) {
-		maxThreads=op.getIntegerOption("max-threads",0);
-		MAX_DEPTH=op.getIntegerOption("max-depth",4);
-	}
-	
-	private void parseOptions(String []args) {
-		CommandLineParser commandLineParser=new CommandLineParser();		
-
-		if (!commandLineParser.parse(args,this)) {
-			die(USAGE);
-		}
-		if (commandLineParser.getRemainingArgCount()>1) {
-			die(USAGE);
-		}		
-		System.out.println("maxThreads="+maxThreads);
-		System.out.println("MAX_DEPTH="+MAX_DEPTH);
 		
+	private void _main() {
 
-		if (commandLineParser.getRemainingArgCount()==1) {
-			int seed=new Integer(commandLineParser.getRemainingArgs()[0]);
-			Board.initRandom(seed);
-			System.out.println("RANDOM:      "+seed);
-		} else {
-			System.out.println("RANDOM:      random");
-		}		
-	}
-	
-	
-	
-	private void _main(String args[]) {
-
-		parseOptions(args);
-		
 		board.setRandomPiece();	
 		board.setRandomPiece();
 		board.dump();
@@ -90,13 +52,54 @@ public class Sim implements CommandLineParser.OptionsCreator {
 			}
 		}
 	}
-		
-	public static void main(String[] args) {
-
-			
-		Sim sim=new Sim();
-		sim._main(args);
-	}
 
 	
+	
+	static final String USAGE="usage: [options] [random-seed]\n" +
+			"  --max-depth n     : max game tree depth\n" +
+			"  --max-threads n   : max threads\n";
+
+	
+	public static void main(String[] args) {
+
+		final Sim sim=new Sim();
+
+		CommandLineParser commandLineParser=new CommandLineParser();		
+
+		if (!commandLineParser.parse(args,new CommandLineParser.OptionsCreator() {
+			public void createOptions(CommandLineParser.OptionProcessor op) {
+				sim.maxThreads=op.getIntegerOption("max-threads",0);
+				sim.MAX_DEPTH=op.getIntegerOption("max-depth",4);
+			}
+		})) {
+			die(USAGE);
+		}
+		if (commandLineParser.getRemainingArgCount()==1) {
+			int seed=new Integer(commandLineParser.getRemainingArgs()[0]);
+			Board.initRandom(seed);
+			System.out.println("RANDOM:      "+seed);
+		} else {
+			System.out.println("RANDOM:      random");
+		}		
+
+		System.out.println("maxThreads="+sim.maxThreads);
+		System.out.println("MAX_DEPTH="+sim.MAX_DEPTH);
+
+		if (commandLineParser.getRemainingArgCount()==1) {
+			int seed=new Integer(commandLineParser.getRemainingArgs()[0]);
+			Board.initRandom(seed);
+			System.out.println("RANDOM:      "+seed);
+		} else {
+			System.out.println("RANDOM:      random");
+		}		
+
+
+		if (commandLineParser.getRemainingArgCount()>1) {
+			die(USAGE);
+		}		
+
+		sim._main();
+	}
+
 }
+
